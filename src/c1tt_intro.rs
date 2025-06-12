@@ -21,4 +21,10 @@ proptest! {
         assert_eq!(sum(a, b), a + b);
     }
 
+
+    #[test]
+    fn test_sum_full(a in any::<u32>(), b in any::<u32>()) {
+        assert_eq!(sum(a, b), a + b);
+    }
+
 }
