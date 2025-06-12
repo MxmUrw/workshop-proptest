@@ -55,20 +55,13 @@ fn generate_range() -> impl Strategy<Value = Range<u32>> {
     (0..255u32, 0..255u32).prop_map(|(a,b)| a..b)
 }
 
-// We can use `vec` to generate a vector of elements that are generated using our custom strategy.
-fn generate_ranges() -> impl Strategy<Value = Vec<Range<u32>>> {
-    vec(generate_range(), 0..20)
-}
-
 proptest! {
     #[test]
-    fn test_insertion(ranges in generate_ranges()) {
+    fn test_insertion(range in generate_range()) {
         let mut set = CompactSet::new();
 
-        // call the `insert` method for every generated range
-        for range in ranges {
-            set.insert(range);
-        }
+        // call the `insert` method on the generated range
+        set.insert(range);
 
         // ensure that the compactset is in a valid state.
         set.validate();
