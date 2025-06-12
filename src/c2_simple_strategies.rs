@@ -17,7 +17,8 @@ fn sum_all_below(mut below: u32, values: Vec<u32>) -> u32 {
 }
 
 proptest! {
-    // Proptest is going to find inputs that trigger the bug.
+    // There's a `vec(value_strategy, length_strategy)` strategy that
+    // generates random vectors with random elements and of random length.
     #[test]
     fn test_sum_all(below in 0..1000u32, values in vec(0..1000u32, 0..20)) {
         assert_eq!(
