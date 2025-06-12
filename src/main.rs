@@ -1,5 +1,5 @@
 #![allow(unused)]
-mod compact_set;
+mod c3_example;
 mod c1_intro;
 mod c2_simple_strategies;
 

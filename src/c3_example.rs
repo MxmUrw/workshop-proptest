@@ -45,18 +45,32 @@ impl CompactSet {
     }
 }
 
+// This function implements a custom strategy for generating a range.
+//
+// Given `x: impl Strategy<Value = A>` and `y: impl Strategy<Value = B>`,
+// the tuple `(x, y)` is a strategy for generating tuple values, ie. `(x, y): Strategy<Value = (A, B)>`.
+//
+// Also, we use the `prop_map` method to turn a strategy for tuples into a strategy for ranges.
+fn generate_range() -> impl Strategy<Value = Range<u32>> {
+    (0..255u32, 0..255u32).prop_map(|(a,b)| a..b)
+}
+
+// We can use `vec` to generate a vector of elements that are generated using our custom strategy.
 fn generate_ranges() -> impl Strategy<Value = Vec<Range<u32>>> {
-    vec((0..255u32, 0..255u32).prop_map(|(a,b)| a..b), 0..20)
+    vec(generate_range(), 0..20)
 }
 
 proptest! {
     #[test]
     fn test_insertion(ranges in generate_ranges()) {
         let mut set = CompactSet::new();
+
+        // call the `insert` method for every generated range
         for range in ranges {
             set.insert(range);
         }
 
+        // ensure that the compactset is in a valid state.
         set.validate();
     }
 }
