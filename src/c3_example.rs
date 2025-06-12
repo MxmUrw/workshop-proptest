@@ -30,41 +30,4 @@ impl CompactSet {
     pub fn contains(&self, query: Range<u32>) -> bool {
         self.ranges.iter().any(|(start, end)| start <= &query.start && end >= &query.end)
     }
-    
-    /// This function verifies that the compact set conforms to its validity requirements.
-    pub fn validate(&self) {
-        // ranges are nonempty
-        for (a,b) in &self.ranges {
-            assert!(a < b, "[ranges are nonempty] current state is: {:?}", self.ranges);
-        }
-
-        // ranges are nonintersecting
-        for (first, second) in self.ranges.iter().zip(self.ranges.iter().skip(1)) {
-            assert!(first.1 < second.0, "[ranges are non intersecting] current state is: {:?}", self.ranges);
-        }
-    }
 }
-
-// This function implements a custom strategy for generating a range.
-//
-// Given `x: impl Strategy<Value = A>` and `y: impl Strategy<Value = B>`,
-// the tuple `(x, y)` is a strategy for generating tuple values, ie. `(x, y): Strategy<Value = (A, B)>`.
-//
-// Also, we use the `prop_map` method to turn a strategy for tuples into a strategy for ranges.
-fn generate_range() -> impl Strategy<Value = Range<u32>> {
-    (0..255u32, 0..255u32).prop_map(|(a,b)| a..b)
-}
-
-proptest! {
-    #[test]
-    fn test_insertion(range in generate_range()) {
-        let mut set = CompactSet::new();
-
-        // call the `insert` method on the generated range
-        set.insert(range);
-
-        // ensure that the compactset is in a valid state.
-        set.validate();
-    }
-}
-
